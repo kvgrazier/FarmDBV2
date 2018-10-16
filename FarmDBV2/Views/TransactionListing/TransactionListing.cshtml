@@ -1,0 +1,94 @@
+﻿@model PagedList.IPagedList<FarmDBV2.Models.tvfTransactionListing_Result>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "TransactionListing";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Transaction Listing</h2>
+<h3>Person:  @Session["PersonName"].ToString()</h3>
+<h4>Begin Date:  @ViewBag.firstDay</h4>
+<h4>End Date:  @ViewBag.lastDay</h4>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("TransactionListing","TransactionListing",
+    new { page, firstDay = ViewBag.firstDay, lastDay = ViewBag.lastDay, sortOrder = ViewBag.CurrentSort }))
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            TransactionID
+        </th>
+        <th>
+            @Html.ActionLink("AcctNumber", "TransactionListing", new { firstDay = ViewBag.firstDay, lastDay = ViewBag.lastDay, sortOrder = ViewBag.AcctSortParm })
+        </th>
+        <th>
+            AccountName
+        </th>
+        <th>
+            AcctSubType
+        </th>
+        <th>
+            AcctAmount
+        </th>
+        <th>
+            @Html.ActionLink("TransactionDate", "TransactionListing", new { firstDay = ViewBag.firstDay, lastDay = ViewBag.lastDay, sortOrder = ViewBag.DateSortParm })
+        </th>
+        <th>
+            TransactionDescription
+        </th>
+        <th>
+            Quantity
+        </th>
+        <th>
+            AccountPerson
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcctNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcctSubType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcctAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountPerson)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.TransactionID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.TransactionID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.TransactionID })
+            </td>
+        </tr>
+    }
+</table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("TransactionListing","TransactionListing",
+    new { page, firstDay = ViewBag.firstDay, lastDay = ViewBag.lastDay, sortOrder = ViewBag.CurrentSort }))

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<FarmDBV2.Models.tvfProfitLoss_Result>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Profit and Loss</h2>
+<h3>Person:  @Session["PersonName"].ToString()</h3>
+<h4>Begin Date:  @ViewBag.firstDay</h4>
+<h4>End Date:  @ViewBag.lastDay</h4>
+<br />
+
+<table class="table">
+    <tr>
+        <th>AccountType</th>
+        <th>AcctSubType</th>
+        <th>AcctNumber</th>
+        <th>AccountName</th>
+        <th>AccountPerson</th>
+        <th>Balance</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.AccountType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AcctSubType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AcctNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AccountName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AccountPerson)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Balance)
+        </td>
+    </tr>
+    }
+</table>

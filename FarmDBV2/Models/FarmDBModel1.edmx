@@ -1,0 +1,430 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="FarmDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AccountPersons">
+          <Key>
+            <PropertyRef Name="AccountPersonID" />
+          </Key>
+          <Property Name="AccountPersonID" Type="int" Nullable="false" />
+          <Property Name="AccountPerson" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Accounts">
+          <Key>
+            <PropertyRef Name="AccountNumber" />
+          </Key>
+          <Property Name="AccountNumber" Type="int" Nullable="false" />
+          <Property Name="AccountName" Type="nvarchar" MaxLength="255" />
+          <Property Name="TaxFormRef" Type="nvarchar" MaxLength="50" />
+          <Property Name="AccountPersonID" Type="int" Nullable="false" />
+          <Property Name="AccountSubTypeID" Type="int" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AccountSubTypes">
+          <Key>
+            <PropertyRef Name="AcctSubTypeID" />
+          </Key>
+          <Property Name="AcctSubTypeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AcctSubType" Type="nvarchar" MaxLength="50" />
+          <Property Name="AccountTypeID" Type="int" />
+          <Property Name="SortOrder" Type="int" />
+        </EntityType>
+        <EntityType Name="AccountTypes">
+          <Key>
+            <PropertyRef Name="AccountTypeID" />
+          </Key>
+          <Property Name="AccountTypeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AccountType" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Transactions">
+          <Key>
+            <PropertyRef Name="TransactionID" />
+          </Key>
+          <Property Name="TransactionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TransactionDate" Type="date" />
+          <Property Name="TransactionDescription" Type="nvarchar" MaxLength="500" />
+          <Property Name="Quantity" Type="float" />
+          <Property Name="AccountNumber1" Type="int" />
+          <Property Name="Account1Amount" Type="money" />
+        </EntityType>
+        <Association Name="FK_Accounts_AccountPersons">
+          <End Role="AccountPersons" Type="Self.AccountPersons" Multiplicity="1" />
+          <End Role="Accounts" Type="Self.Accounts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccountPersons">
+              <PropertyRef Name="AccountPersonID" />
+            </Principal>
+            <Dependent Role="Accounts">
+              <PropertyRef Name="AccountPersonID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Accounts_AccountSubTypes">
+          <End Role="AccountSubTypes" Type="Self.AccountSubTypes" Multiplicity="0..1" />
+          <End Role="Accounts" Type="Self.Accounts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccountSubTypes">
+              <PropertyRef Name="AcctSubTypeID" />
+            </Principal>
+            <Dependent Role="Accounts">
+              <PropertyRef Name="AccountSubTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AccountSubType_AccountTypes">
+          <End Role="AccountTypes" Type="Self.AccountTypes" Multiplicity="0..1" />
+          <End Role="AccountSubTypes" Type="Self.AccountSubTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccountTypes">
+              <PropertyRef Name="AccountTypeID" />
+            </Principal>
+            <Dependent Role="AccountSubTypes">
+              <PropertyRef Name="AccountTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Accounts">
+          <End Role="Accounts" Type="Self.Accounts" Multiplicity="0..1" />
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Accounts">
+              <PropertyRef Name="AccountNumber" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="AccountNumber1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="tvfProfitLoss" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="BeginningTransDate" Type="date" Mode="In" />
+          <Parameter Name="EndingTransDate" Type="date" Mode="In" />
+          <Parameter Name="Person" Type="int" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="AcctNumber" Type="int" />
+                <Property Name="Balance" Type="money" />
+                <Property Name="AccountName" Type="nvarchar" MaxLength="255" />
+                <Property Name="AcctSubType" Type="nvarchar" MaxLength="50" />
+                <Property Name="AccountTypeID" Type="int" />
+                <Property Name="SortOrder" Type="int" />
+                <Property Name="AccountType" Type="nvarchar" MaxLength="50" />
+                <Property Name="AccountPerson" Type="varchar" MaxLength="50" Nullable="false" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <Function Name="tvfTransactionListing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="BeginningTransDate" Type="date" Mode="In" />
+          <Parameter Name="EndingTransDate" Type="date" Mode="In" />
+          <Parameter Name="Person" Type="int" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="TransactionID" Type="int" Nullable="false" />
+                <Property Name="AcctNumber" Type="int" />
+                <Property Name="AccountName" Type="nvarchar" MaxLength="255" />
+                <Property Name="AcctSubType" Type="nvarchar" MaxLength="50" />
+                <Property Name="AcctAmount" Type="money" />
+                <Property Name="TransactionDate" Type="date" />
+                <Property Name="TransactionDescription" Type="nvarchar" MaxLength="500" />
+                <Property Name="Quantity" Type="float" />
+                <Property Name="AccountPerson" Type="varchar" MaxLength="50" Nullable="false" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <EntityContainer Name="FarmDBModelStoreContainer">
+          <EntitySet Name="AccountPersons" EntityType="Self.AccountPersons" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Accounts" EntityType="Self.Accounts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AccountSubTypes" EntityType="Self.AccountSubTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AccountTypes" EntityType="Self.AccountTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Accounts_AccountPersons" Association="Self.FK_Accounts_AccountPersons">
+            <End Role="AccountPersons" EntitySet="AccountPersons" />
+            <End Role="Accounts" EntitySet="Accounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Accounts_AccountSubTypes" Association="Self.FK_Accounts_AccountSubTypes">
+            <End Role="AccountSubTypes" EntitySet="AccountSubTypes" />
+            <End Role="Accounts" EntitySet="Accounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AccountSubType_AccountTypes" Association="Self.FK_AccountSubType_AccountTypes">
+            <End Role="AccountTypes" EntitySet="AccountTypes" />
+            <End Role="AccountSubTypes" EntitySet="AccountSubTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Accounts" Association="Self.FK_Transactions_Accounts">
+            <End Role="Accounts" EntitySet="Accounts" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="FarmDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AccountSubType">
+          <Key>
+            <PropertyRef Name="AcctSubTypeID" />
+          </Key>
+          <Property Name="AcctSubTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AcctSubType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AccountTypeID" Type="Int32" />
+          <Property Name="SortOrder" Type="Int32" />
+          <NavigationProperty Name="AccountType" Relationship="FarmDBModel.FK_AccountSubType_AccountTypes" FromRole="AccountSubType" ToRole="AccountType" />
+          <NavigationProperty Name="Accounts" Relationship="FarmDBModel.FK_Accounts_AccountSubTypes" FromRole="AccountSubType" ToRole="Account" />
+        </EntityType>
+        <EntityContainer Name="FarmDBEntities2" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AccountSubTypes" EntityType="Self.AccountSubType" />
+          <EntitySet Name="AccountTypes" EntityType="FarmDBModel.AccountType" />
+          <AssociationSet Name="FK_AccountSubType_AccountTypes" Association="FarmDBModel.FK_AccountSubType_AccountTypes">
+            <End Role="AccountType" EntitySet="AccountTypes" />
+            <End Role="AccountSubType" EntitySet="AccountSubTypes" />
+          </AssociationSet>
+          <EntitySet Name="Transactions" EntityType="FarmDBModel.Transaction" />
+          <EntitySet Name="AccountPersons" EntityType="FarmDBModel.AccountPerson" />
+          <EntitySet Name="Accounts" EntityType="FarmDBModel.Account" />
+          <AssociationSet Name="FK_Accounts_AccountPersons" Association="FarmDBModel.FK_Accounts_AccountPersons">
+            <End Role="AccountPerson" EntitySet="AccountPersons" />
+            <End Role="Account" EntitySet="Accounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Accounts_AccountSubTypes" Association="FarmDBModel.FK_Accounts_AccountSubTypes">
+            <End Role="AccountSubType" EntitySet="AccountSubTypes" />
+            <End Role="Account" EntitySet="Accounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Accounts" Association="FarmDBModel.FK_Transactions_Accounts">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="Transaction" EntitySet="Transactions" />
+          </AssociationSet>
+          <FunctionImport Name="tvfTransactionListing" IsComposable="true" ReturnType="Collection(FarmDBModel.tvfTransactionListing_Result)">
+            <Parameter Name="BeginningTransDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndingTransDate" Mode="In" Type="DateTime" />
+            <Parameter Name="Person" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="tvfProfitLoss" IsComposable="true" ReturnType="Collection(FarmDBModel.tvfProfitLoss_Result)">
+            <Parameter Name="BeginningTransDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndingTransDate" Mode="In" Type="DateTime" />
+            <Parameter Name="Person" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="AccountType">
+          <Key>
+            <PropertyRef Name="AccountTypeID" />
+          </Key>
+          <Property Name="AccountTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AccountType1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AccountSubTypes" Relationship="FarmDBModel.FK_AccountSubType_AccountTypes" FromRole="AccountType" ToRole="AccountSubType" />
+        </EntityType>
+        <Association Name="FK_AccountSubType_AccountTypes">
+          <End Type="FarmDBModel.AccountType" Role="AccountType" Multiplicity="0..1" />
+          <End Type="FarmDBModel.AccountSubType" Role="AccountSubType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccountType">
+              <PropertyRef Name="AccountTypeID" />
+            </Principal>
+            <Dependent Role="AccountSubType">
+              <PropertyRef Name="AccountTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Transaction">
+          <Key>
+            <PropertyRef Name="TransactionID" />
+          </Key>
+          <Property Name="TransactionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TransactionDate" Type="DateTime" Precision="0" />
+          <Property Name="TransactionDescription" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Double" />
+          <Property Name="AccountNumber1" Type="Int32" />
+          <Property Name="Account1Amount" Type="Decimal" Precision="19" Scale="4" />
+          <NavigationProperty Name="Account" Relationship="FarmDBModel.FK_Transactions_Accounts" FromRole="Transaction" ToRole="Account" />
+        </EntityType>
+        <EntityType Name="AccountPerson">
+          <Key>
+            <PropertyRef Name="AccountPersonID" />
+          </Key>
+          <Property Name="AccountPersonID" Type="Int32" Nullable="false" />
+          <Property Name="AccountPerson1" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Accounts" Relationship="FarmDBModel.FK_Accounts_AccountPersons" FromRole="AccountPerson" ToRole="Account" />
+        </EntityType>
+        <EntityType Name="Account">
+          <Key>
+            <PropertyRef Name="AccountNumber" />
+          </Key>
+          <Property Name="AccountNumber" Type="Int32" Nullable="false" />
+          <Property Name="AccountName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TaxFormRef" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AccountPersonID" Type="Int32" Nullable="false" />
+          <Property Name="AccountSubTypeID" Type="Int32" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="AccountPerson" Relationship="FarmDBModel.FK_Accounts_AccountPersons" FromRole="Account" ToRole="AccountPerson" />
+          <NavigationProperty Name="AccountSubType" Relationship="FarmDBModel.FK_Accounts_AccountSubTypes" FromRole="Account" ToRole="AccountSubType" />
+          <NavigationProperty Name="Transactions" Relationship="FarmDBModel.FK_Transactions_Accounts" FromRole="Account" ToRole="Transaction" />
+        </EntityType>
+        <Association Name="FK_Accounts_AccountPersons">
+          <End Type="FarmDBModel.AccountPerson" Role="AccountPerson" Multiplicity="1" />
+          <End Type="FarmDBModel.Account" Role="Account" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccountPerson">
+              <PropertyRef Name="AccountPersonID" />
+            </Principal>
+            <Dependent Role="Account">
+              <PropertyRef Name="AccountPersonID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Accounts_AccountSubTypes">
+          <End Type="FarmDBModel.AccountSubType" Role="AccountSubType" Multiplicity="0..1" />
+          <End Type="FarmDBModel.Account" Role="Account" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccountSubType">
+              <PropertyRef Name="AcctSubTypeID" />
+            </Principal>
+            <Dependent Role="Account">
+              <PropertyRef Name="AccountSubTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Accounts">
+          <End Type="FarmDBModel.Account" Role="Account" Multiplicity="0..1" />
+          <End Type="FarmDBModel.Transaction" Role="Transaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="AccountNumber" />
+            </Principal>
+            <Dependent Role="Transaction">
+              <PropertyRef Name="AccountNumber1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="tvfTransactionListing_Result">
+          <Property Type="Int32" Name="TransactionID" Nullable="false" />
+          <Property Type="Int32" Name="AcctNumber" Nullable="true" />
+          <Property Type="String" Name="AccountName" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="AcctSubType" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="AcctAmount" Nullable="true" Precision="19" Scale="4" />
+          <Property Type="DateTime" Name="TransactionDate" Nullable="true" Precision="10" />
+          <Property Type="String" Name="TransactionDescription" Nullable="true" MaxLength="500" />
+          <Property Type="Double" Name="Quantity" Nullable="true" />
+          <Property Type="String" Name="AccountPerson" Nullable="false" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="tvfProfitLoss_Result">
+          <Property Type="Int32" Name="AcctNumber" Nullable="true" />
+          <Property Type="Decimal" Name="Balance" Nullable="true" Precision="19" Scale="4" />
+          <Property Type="String" Name="AccountName" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="AcctSubType" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="AccountTypeID" Nullable="true" />
+          <Property Type="Int32" Name="SortOrder" Nullable="true" />
+          <Property Type="String" Name="AccountType" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="AccountPerson" Nullable="false" MaxLength="50" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="FarmDBModelStoreContainer" CdmEntityContainer="FarmDBEntities2">
+          <EntitySetMapping Name="AccountSubTypes">
+            <EntityTypeMapping TypeName="FarmDBModel.AccountSubType">
+              <MappingFragment StoreEntitySet="AccountSubTypes">
+                <ScalarProperty Name="AcctSubTypeID" ColumnName="AcctSubTypeID" />
+                <ScalarProperty Name="AcctSubType" ColumnName="AcctSubType" />
+                <ScalarProperty Name="AccountTypeID" ColumnName="AccountTypeID" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AccountTypes">
+            <EntityTypeMapping TypeName="FarmDBModel.AccountType">
+              <MappingFragment StoreEntitySet="AccountTypes">
+                <ScalarProperty Name="AccountType1" ColumnName="AccountType" />
+                <ScalarProperty Name="AccountTypeID" ColumnName="AccountTypeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Transactions">
+            <EntityTypeMapping TypeName="FarmDBModel.Transaction">
+              <MappingFragment StoreEntitySet="Transactions">
+                <ScalarProperty Name="Account1Amount" ColumnName="Account1Amount" />
+                <ScalarProperty Name="AccountNumber1" ColumnName="AccountNumber1" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="TransactionDescription" ColumnName="TransactionDescription" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="TransactionID" ColumnName="TransactionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AccountPersons">
+            <EntityTypeMapping TypeName="FarmDBModel.AccountPerson">
+              <MappingFragment StoreEntitySet="AccountPersons">
+                <ScalarProperty Name="AccountPerson1" ColumnName="AccountPerson" />
+                <ScalarProperty Name="AccountPersonID" ColumnName="AccountPersonID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Accounts">
+            <EntityTypeMapping TypeName="FarmDBModel.Account">
+              <MappingFragment StoreEntitySet="Accounts">
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="AccountSubTypeID" ColumnName="AccountSubTypeID" />
+                <ScalarProperty Name="AccountPersonID" ColumnName="AccountPersonID" />
+                <ScalarProperty Name="TaxFormRef" ColumnName="TaxFormRef" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="tvfTransactionListing" FunctionName="FarmDBModel.Store.tvfTransactionListing">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="FarmDBModel.tvfTransactionListing_Result">
+                <ScalarProperty Name="TransactionID" ColumnName="TransactionID" />
+                <ScalarProperty Name="AcctNumber" ColumnName="AcctNumber" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AcctSubType" ColumnName="AcctSubType" />
+                <ScalarProperty Name="AcctAmount" ColumnName="AcctAmount" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="TransactionDescription" ColumnName="TransactionDescription" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="AccountPerson" ColumnName="AccountPerson" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="tvfProfitLoss" FunctionName="FarmDBModel.Store.tvfProfitLoss">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="FarmDBModel.tvfProfitLoss_Result">
+                <ScalarProperty Name="AcctNumber" ColumnName="AcctNumber" />
+                <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AcctSubType" ColumnName="AcctSubType" />
+                <ScalarProperty Name="AccountTypeID" ColumnName="AccountTypeID" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="AccountType" ColumnName="AccountType" />
+                <ScalarProperty Name="AccountPerson" ColumnName="AccountPerson" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,66 @@
+﻿@model FarmDBV2.Models.Account
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Account</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.AccountNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AccountNumber)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AccountName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AccountName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TaxFormRef)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TaxFormRef)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Active)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Active)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AccountPerson.AccountPerson1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AccountPerson.AccountPerson1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AccountSubType.AcctSubType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AccountSubType.AcctSubType)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.AccountNumber }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<FarmDBV2.Models.AccountSubType>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Account Sub Types</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.AcctSubType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SortOrder)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AccountType.AccountType1)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.AcctSubType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SortOrder)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AccountType.AccountType1)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.AcctSubTypeID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.AcctSubTypeID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.AcctSubTypeID })
+        </td>
+    </tr>
+}
+
+</table>
